@@ -1,6 +1,7 @@
 INPUT_FILE = 'input'
 
-''' Sum first and last digit(s) of each line in input file 
+''' 
+    Sum first and last digit(s) of each line in input file 
 
     Assume no negative numbers.
 '''
@@ -36,7 +37,6 @@ def get_count(lines):
         sum += int(get_first_digit(line) + get_last_digit(line))
     print(sum)
     
-
 def main():
     lines = read_file(INPUT_FILE)
     get_count(lines)
