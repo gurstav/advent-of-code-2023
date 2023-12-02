@@ -1,4 +1,4 @@
-INPUT_FILE = 'input-not-quite-lisp'
+INPUT_FILE = 'not-quite-lisp-input'
 
 map = {'(': 1, ')': -1}
 
