@@ -1,20 +1,21 @@
 '''
-# Get input
-# Read input into a n x m matrix A
-# Get indicies of entries on each row (x,y). This will be a set of indicies (l_start, k) to  (l_end, k)
-#   Get allowed symbols
-#   Get numbers
-#
-# Check adjecency
-    Row above A[l_start-1, k-1] to A[l_end, k-1]
-    Same row A[l_start-1, k] to A[l_end+1, k]
-    Row below A[l_start-1, k+1] to A[l_end, k+1]
+    Read input into a n x m matrix A
+    Get indicies of entries on each row (x,y). This will be a set of indicies (l_start, k) to  (l_end, k)
+    Get allowed symbols
+    Get numbers
+
+    Check adjecency
+        Row above A[l_start-1, k-1] to A[l_end, k-1]
+        Same row A[l_start-1, k] to A[l_end+1, k]
+        Row below A[l_start-1, k+1] to A[l_end, k+1]
 '''
 import re
 import math
 
 
-''' TEST CASES (from internet somewhere) 
+''' 
+TEST CASES (from internet somewhere) 
+
 Should render
     Part 1: 925 (OK!)
     Part 2: 6756
