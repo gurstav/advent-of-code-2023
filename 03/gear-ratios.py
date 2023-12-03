@@ -12,6 +12,43 @@
 '''
 import re
 
+
+''' TEST CASES (from internet somewhere) 
+Should render
+    Part 1: 925
+    Part 2: 6756
+
+Test cases covered:
+    Number with no surrounding symbol
+    Number with symbol before and after on same line
+    Number with symbol vertically above and below
+    Number with diagonal symbol in all 4 possible diagonals
+    Possible gear with 1, 2, 3 and 4 surrounding numbers
+    Gear with different numbers
+    Gear with same numbers
+    Non gear with 2 unique surrounding numbers
+    Number at beginning/end of line
+    Number at beginning/end of grid
+    Numbers need to have a symbol adjacent to be a valid part, not another number
+    Single digit numbers at the end of a row can be valid parts
+    An odd Javascript parsing error (co /u/anopse )
+'''
+TEST_CASES = [
+"12.......*..",
+"+.........34",
+".......-12..",
+"..78........",
+"..*....60...",
+"78.........9",
+".5.....23..$",
+"8...90*12...",
+"............",
+"2.2......12.",
+".*.........*",
+"1.1..503+.56"
+]
+
+
 INPUT_FILE = 'gear-ratios-input' 
 NON_ALLOWED_SYMBOLS = {}
 DELIMITERS = {"."}
@@ -75,6 +112,7 @@ def has_adjacent_symbol_above(number, matrix):
     from_index = number.start_index-1 if number.start_index-1 >= 0 else 0 # Guard left edge
     to_index = number.end_index+1 if number.end_index+1 <= row_length else row_length # Guard right edge
     adjacent_characters = row_above[from_index:to_index]
+
     has_symbol = []
     for character in adjacent_characters:
         has_symbol.append(is_symbol(character))
@@ -93,7 +131,7 @@ def has_adjacent_symbol_on_same_row(number, matrix):
     else:
         has_symbol.append(False)
 
-    index_after = number.end_index+1
+    index_after = number.end_index
     if (index_after < row_length):
         character_after = same_row[index_after]
         has_symbol.append(is_symbol(character_after))
@@ -111,6 +149,7 @@ def has_adjacent_symbol_below(number, matrix):
     from_index = number.start_index-1 if number.start_index-1 >= 0 else 0 # Guard left edge
     to_index = number.end_index+1 if number.end_index+1 <= row_length else row_length # Guard right edge
     adjacent_characters = row_below[from_index:to_index]
+
     has_symbol = []
     for character in adjacent_characters:
         has_symbol.append(is_symbol(character))
@@ -126,13 +165,14 @@ def check_has_adjacent_symbol(numbers, matrix):
         number.has_adjacent_symbol = any([number.has_adjacent_symbol_above, number.has_adjacent_symbol_on_same_row, number.has_adjacent_symbol_below])
 
 if __name__ == '__main__':
-    lines = read_file()
+    #lines = read_file()
+    lines = TEST_CASES
     numbers = get_numbers(lines)
     matrix = get_matrix(lines)
     check_has_adjacent_symbol(numbers, matrix)
     sum = 0
     for number in numbers:
-        print(f"{number.value} {number.has_adjacent_symbol} (above: {number.has_adjacent_symbol_above}, same: {number.has_adjacent_symbol_on_same_row}, below: {number.has_adjacent_symbol_below}) ")
+        #print(f"{number.value} {number.has_adjacent_symbol} (above: {number.has_adjacent_symbol_above}, same: {number.has_adjacent_symbol_on_same_row}, below: {number.has_adjacent_symbol_below}) ")
         if number.has_adjacent_symbol: 
             sum += number.value
             print(" Added to sum: ", sum)
