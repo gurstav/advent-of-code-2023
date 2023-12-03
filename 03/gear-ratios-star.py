@@ -188,32 +188,7 @@ def get_gears(matrix):
 
     return gears
 
-def get_part_numbers(numbers):
-    part_numbers = set()
-    for number in numbers:
-        if number.has_adjacent_symbol: part_numbers.add(number.value)
-
-    return part_numbers
-
-if __name__ == '__main__':
-    #lines = TEST_CASES
-    lines = read_file()
-    
-    numbers = get_numbers(lines)
-    matrix = get_matrix(lines)
-    check_has_adjacent_symbol(numbers, matrix)
-
-    '''
-    Plan
-        x Rework to check numbers only adjacent to '*'
-        x Get all gears and associated indicies
-        x Get all part numbers and associated gears (with indicies)
-            x Note that one part number can have multiple gears
-        x Group number values by gear
-        x Check product by gear
-            x Note to only consider gears having exactly two part numbers
-    '''
-
+def group_number_values_by_gear(numbers):
     gear_values = {}
     # initialize number values per gear
     for n in numbers:
@@ -226,10 +201,40 @@ if __name__ == '__main__':
         for gear in n.adjacent_gears:
             gear_values[f"({gear.index}, {gear.line_nr})"].append(n.value)
 
-    sum = 0
-    for gear in gear_values.keys():
-        product = math.prod(gear_values[gear])
-        if(len(gear_values[gear])==2): # only consider gears having exactly two part numbers
-            sum += product
+    return gear_values
 
+
+def has_exactly_two_part_numbers(gear, values_by_gear):
+    ''' Only consider gears having exactly two part numbers '''
+    return len(values_by_gear[gear]) == 2
+
+def get_sum(values_by_gear):
+    sum = 0
+    for gear in values_by_gear.keys():
+        product = math.prod(values_by_gear[gear])
+        if(has_exactly_two_part_numbers(gear, values_by_gear)):
+            sum += product
+    
+    return sum
+
+if __name__ == '__main__':
+    '''
+    Plan
+        x Rework to check numbers only adjacent to '*'
+        x Get all gears and associated indicies
+        x Get all part numbers and associated gears (with indicies)
+            x Note that one part number can have multiple gears
+        x Group number values by gear
+        x Check product by gear
+            x Note to only consider gears having exactly two part numbers
+    '''
+    
+    #lines = TEST_CASES
+    lines = read_file()
+    numbers = get_numbers(lines)
+    matrix = get_matrix(lines)
+    check_has_adjacent_symbol(numbers, matrix)
+    values_by_gear = group_number_values_by_gear(numbers)
+    sum = get_sum(values_by_gear)
+    
     print(sum) # 81709807 correct answer
