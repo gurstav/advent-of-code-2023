@@ -58,9 +58,6 @@ def read_file(path=INPUT_FILE):
         lines = f.readlines()
     return lines
 
-def get_sum():
-    pass
-
 def get_matrix(lines):
     matrix = []
     for x, line in enumerate(lines):
@@ -82,8 +79,6 @@ class Number():
         self.row_nr = row_nr
 
 def find_indicies_of_number(value, line, distinct_numbers_on_line):
-    ''' TODO NEED TO FIX MULTIPLE OF SAME NUMBERS ON SAME LINE '''
-    # TODO ''' should return zip start_index, end_index'''
     start_indicies = [match.start() for match in re.finditer(f'\\b{value}\\b', line)] # '\\b . \\b' sets exact regexp boundary    
     end_indicies = [i+len(value)-1 for i in start_indicies]
 
@@ -169,6 +164,15 @@ def check_has_adjacent_symbol(numbers, matrix):
 
         number.has_adjacent_symbol = any([number.has_adjacent_symbol_above, number.has_adjacent_symbol_on_same_row, number.has_adjacent_symbol_below])
 
+def get_sum(numbers):
+    sum = 0
+    for number in numbers:
+        # DEBUG: print(f"{number.value} {number.has_adjacent_symbol} (above: {number.has_adjacent_symbol_above}, same: {number.has_adjacent_symbol_on_same_row}, below: {number.has_adjacent_symbol_below}) ")
+        if number.has_adjacent_symbol: 
+            sum += number.value
+
+    return sum
+
 if __name__ == '__main__':
     # DEBUG: lines = TEST_CASES
     lines = read_file()
@@ -176,10 +180,7 @@ if __name__ == '__main__':
     numbers = get_numbers(lines)
     matrix = get_matrix(lines)
     check_has_adjacent_symbol(numbers, matrix)
-    sum = 0
-    for number in numbers:
-        # DEBUG: print(f"{number.value} {number.has_adjacent_symbol} (above: {number.has_adjacent_symbol_above}, same: {number.has_adjacent_symbol_on_same_row}, below: {number.has_adjacent_symbol_below}) ")
-        if number.has_adjacent_symbol: 
-            sum += number.value
+    sum = get_sum(numbers)
             
     print("Sum is ", sum) # 538046 correct
+    
