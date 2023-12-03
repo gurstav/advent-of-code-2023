@@ -15,7 +15,7 @@ import re
 
 ''' TEST CASES (from internet somewhere) 
 Should render
-    Part 1: 925
+    Part 1: 925 (OK!)
     Part 2: 6756
 
 Test cases covered:
@@ -70,8 +70,8 @@ def get_matrix(lines):
 
     return matrix
 
-def find_numbers(line):
-    return re.findall(r'\d+', line)
+def find_distinct_numbers(line):
+    return set(re.findall(r'\d+', line))
 
 class Number():
 
@@ -81,19 +81,22 @@ class Number():
         self.end_index = end_index
         self.row_nr = row_nr
 
-def find_indicies_of_number(value, line):
-    start_index = line.find(value)
-    end_index = start_index + len(value)
+def find_indicies_of_number(value, line, distinct_numbers_on_line):
+    ''' TODO NEED TO FIX MULTIPLE OF SAME NUMBERS ON SAME LINE '''
+    # TODO ''' should return zip start_index, end_index'''
+    start_indicies = [match.start() for match in re.finditer(f'\\b{value}\\b', line)] # '\\b . \\b' sets exact regexp boundary    
+    end_indicies = [i+len(value)-1 for i in start_indicies]
 
-    return start_index, end_index
+    return zip(start_indicies, end_indicies)
 
 def get_numbers(lines):
     numbers = []
     for row_nr, line in enumerate(lines):
-        numbers_on_line = find_numbers(line)
-        for value in numbers_on_line:
-            start_index, end_index = find_indicies_of_number(value, line)
-            numbers.append(Number(value, start_index, end_index, row_nr))
+        distinct_numbers_on_line = find_distinct_numbers(line)
+        for value in iter(distinct_numbers_on_line):
+            indicies_of_number = find_indicies_of_number(value, line, distinct_numbers_on_line)
+            for start_index, end_index in indicies_of_number:
+                numbers.append(Number(value, start_index, end_index, row_nr))
 
     return numbers
 
@@ -110,9 +113,9 @@ def has_adjacent_symbol_above(number, matrix):
     row_above = matrix[row_above_nr]
     row_length = len(row_above)
     from_index = number.start_index-1 if number.start_index-1 >= 0 else 0 # Guard left edge
-    to_index = number.end_index+1 if number.end_index+1 <= row_length else row_length # Guard right edge
+    to_index = number.end_index+2 if number.end_index+2 <= row_length else row_length # Guard right edge
     adjacent_characters = row_above[from_index:to_index]
-
+    # DEBUG: print(f"{number.value} on {number.start_index}:{number.end_index} has adjacent_characters {adjacent_characters} on row above")
     has_symbol = []
     for character in adjacent_characters:
         has_symbol.append(is_symbol(character))
@@ -125,15 +128,17 @@ def has_adjacent_symbol_on_same_row(number, matrix):
     has_symbol = []
 
     index_before = number.start_index-1
-    if (index_before > 0):
+    if (index_before >= 0):
         character_before = same_row[index_before]
+        # DEBUG: print(f"{character_before} before {number.value}")
         has_symbol.append(is_symbol(character_before))
     else:
         has_symbol.append(False)
 
-    index_after = number.end_index
+    index_after = number.end_index+1
     if (index_after < row_length):
         character_after = same_row[index_after]
+        # DEBUG: print(f"{character_after} after {number.value} (on indicies {number.start_index}:{number.end_index})")
         has_symbol.append(is_symbol(character_after))
     else:
         has_symbol.append(False)
@@ -147,7 +152,7 @@ def has_adjacent_symbol_below(number, matrix):
     row_below = matrix[number.row_nr+1]
     row_length = len(row_below)
     from_index = number.start_index-1 if number.start_index-1 >= 0 else 0 # Guard left edge
-    to_index = number.end_index+1 if number.end_index+1 <= row_length else row_length # Guard right edge
+    to_index = number.end_index+2 if number.end_index+2 <= row_length else row_length # Guard right edge
     adjacent_characters = row_below[from_index:to_index]
 
     has_symbol = []
@@ -165,16 +170,16 @@ def check_has_adjacent_symbol(numbers, matrix):
         number.has_adjacent_symbol = any([number.has_adjacent_symbol_above, number.has_adjacent_symbol_on_same_row, number.has_adjacent_symbol_below])
 
 if __name__ == '__main__':
-    #lines = read_file()
-    lines = TEST_CASES
+    # DEBUG: lines = TEST_CASES
+    lines = read_file()
+    
     numbers = get_numbers(lines)
     matrix = get_matrix(lines)
     check_has_adjacent_symbol(numbers, matrix)
     sum = 0
     for number in numbers:
-        #print(f"{number.value} {number.has_adjacent_symbol} (above: {number.has_adjacent_symbol_above}, same: {number.has_adjacent_symbol_on_same_row}, below: {number.has_adjacent_symbol_below}) ")
+        # DEBUG: print(f"{number.value} {number.has_adjacent_symbol} (above: {number.has_adjacent_symbol_above}, same: {number.has_adjacent_symbol_on_same_row}, below: {number.has_adjacent_symbol_below}) ")
         if number.has_adjacent_symbol: 
             sum += number.value
-            print(" Added to sum: ", sum)
             
-    print("Sum is ", sum)
+    print("Sum is ", sum) # 538046 correct
