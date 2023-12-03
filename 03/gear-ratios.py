@@ -53,6 +53,15 @@ INPUT_FILE = 'gear-ratios-input'
 NON_ALLOWED_SYMBOLS = {}
 DELIMITERS = {"."}
 
+class Number():
+
+    def __init__(self, value, start_index, end_index, row_nr):
+        self.value = int(value)
+        self.start_index = start_index
+        self.end_index = end_index
+        self.row_nr = row_nr
+        
+
 def read_file(path=INPUT_FILE):
     with open(path) as f:
         lines = f.readlines()
@@ -69,14 +78,6 @@ def get_matrix(lines):
 
 def find_distinct_numbers(line):
     return set(re.findall(r'\d+', line))
-
-class Number():
-
-    def __init__(self, value, start_index, end_index, row_nr):
-        self.value = int(value)
-        self.start_index = start_index
-        self.end_index = end_index
-        self.row_nr = row_nr
 
 def find_indicies_of_number(value, line, distinct_numbers_on_line):
     start_indicies = [match.start() for match in re.finditer(f'\\b{value}\\b', line)] # '\\b . \\b' sets exact regexp boundary    
@@ -183,4 +184,3 @@ if __name__ == '__main__':
     sum = get_sum(numbers)
             
     print("Sum is ", sum) # 538046 correct
-    
