@@ -38,7 +38,7 @@ import re
 
 '''
 
-TEST_CASES = ["Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53", "Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19"]
+TEST_CASES = ["Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53", "Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19", "Card 3: 13 32 20 16 61 | 61 30 68 82 17 32 24 19", "Card 4: 41 48 83 86 18 | 83 86  6 31 18  9 48 53"]
 INPUT_FILE = 'scratchcards-input' 
 
 class Card():
@@ -112,18 +112,34 @@ class Card():
     def _get_winning_and_scratch_number_intersection(self):
         return self.winning_numbers.intersection(self.scratch_numbers)
 
-    def _get_number_of_matches(self):
+    def get_number_of_matches(self):
         ''' Count cardinality of scratch_numbers.intersection(winning_numbers) '''
         intersection = self._get_winning_and_scratch_number_intersection()
         return self._get_cardinality_of(intersection)
     
     def get_points(self):
-        number_of_matches = self._get_number_of_matches()
+        number_of_matches = self.get_number_of_matches()
         if number_of_matches == 0: 
             return 0
         else:
             return 2**(number_of_matches-1)
         
+    def register_successors(self, cards):
+        number_of_matches = self.get_number_of_matches()
+        next_card_index = self.number # Number 1 in index 0, so successor in index 1 = self.number
+        last_card_index = self.number + number_of_matches
+        self.successors = cards[next_card_index:last_card_index]
+
+    def register_number_of_cards_won(self):
+        ''' While there are successors, recursively look through the successors of each successor and count the number of cards won '''
+        number_of_cards_won, successors = 0, [self]
+        while successors:
+            current_card = successors.pop()
+            successors.extend(current_card.successors)
+            number_of_cards_won += 1
+
+        self.number_of_cards_won = number_of_cards_won
+
 
 def read_file(path=INPUT_FILE):
     lines = []
@@ -146,11 +162,26 @@ def calculate_sum(cards):
 
     return sum
 
+def register_successors(cards):
+    for card in cards:
+        card.register_successors(cards)
+
+def register_number_of_cards_won(cards):
+    for card in cards:
+        card.register_number_of_cards_won()
+
+def get_sum(cards):
+    sum = 0
+    for card in cards:
+        sum += card.number_of_cards_won
+
+    return sum
 
 if __name__ == '__main__':
     #lines = TEST_CASES
     lines = read_file()
     cards = get_cards(lines)
-    sum = calculate_sum(cards)
-            
-    print("Sum is ", sum) # Correct answer 22897
+    register_successors(cards)
+    register_number_of_cards_won(cards)
+    sum = get_sum(cards)
+    print(sum) # Correct answer 5095824
