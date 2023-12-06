@@ -103,4 +103,3 @@ if __name__ == '__main__':
     number_of_broken_records_per_boat = get_number_of_broken_records_per_boat(races)
     product = get_product(number_of_broken_records_per_boat)
     print(product) # 28101347 correct
-    

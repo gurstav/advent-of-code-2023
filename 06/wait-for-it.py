@@ -70,12 +70,10 @@ def parse_input(lines):
     for line in lines:
         if "Time:" in line:
             raw_line = line.replace("Time:", "").strip()
-            match = re.match(r'^\d+(?:\s+\d+){3}$', raw_line)
-            race_times = [int(value) for value in match.group(0).split('     ')]
+            race_times = [int(value) for value in raw_line.split('     ')]
         if "Distance:" in line:
             raw_line = line.replace("Distance:", "").strip()
-            match = re.match(r'^\d+(?:\s+\d+){3}$', raw_line)
-            record_distances = [int(value) for value in match.group(0).split('   ')]
+            record_distances = [int(value) for value in raw_line.split('   ')]
     
     return race_times, record_distances
 
