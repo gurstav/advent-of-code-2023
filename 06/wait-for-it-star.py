@@ -64,22 +64,6 @@ def read_file(path=INPUT_FILE):
         lines = f.readlines()
     return lines
 
-def parse_input(lines):
-    ''' return list race_times and list record_distances '''
-    race_times = []
-    record_distances = []
-    for line in lines:
-        if "Time:" in line:
-            raw_line = line.replace("Time:", "").strip()
-            match = re.match(r'^\d+(?:\s+\d+){3}$', raw_line)
-            race_times = [int(value) for value in match.group(0).split('     ')]
-        if "Distance:" in line:
-            raw_line = line.replace("Distance:", "").strip()
-            match = re.match(r'^\d+(?:\s+\d+){3}$', raw_line)
-            record_distances = [int(value) for value in match.group(0).split('   ')]
-    
-    return race_times, record_distances
-
 def get_races(race_times, record_distances):
     races = [Race(race_time, record_distance) for race_time, record_distance in zip(race_times, record_distances)]
 
@@ -96,8 +80,6 @@ def get_product(number_of_broken_records_per_boat):
     return math.prod(number_of_broken_records_per_boat)
 
 if __name__ == '__main__':
-    #lines = INPUT_TEST
-    #lines = read_file()
     race_times, record_distances = RACE_TIMES, RECORD_DISTANCES
     races = get_races(race_times, record_distances)
     number_of_broken_records_per_boat = get_number_of_broken_records_per_boat(races)
