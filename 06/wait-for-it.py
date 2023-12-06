@@ -64,7 +64,7 @@ def read_file(path=INPUT_FILE):
     return lines
 
 def parse_input(lines):
-    ''' return list race_times and list record_distances '''
+    ''' Return list race_times and list record_distances '''
     race_times = []
     record_distances = []
     for line in lines:
@@ -93,13 +93,11 @@ def get_product(number_of_broken_records_per_boat):
     return math.prod(number_of_broken_records_per_boat)
 
 if __name__ == '__main__':
-    #lines = INPUT_TEST
     lines = read_file()
     race_times, record_distances = parse_input(lines)
-    print(race_times, record_distances)
     races = get_races(race_times, record_distances)
     number_of_broken_records_per_boat = get_number_of_broken_records_per_boat(races)
     product = get_product(number_of_broken_records_per_boat)
+
     print(product) # Correct 861300
-    
     
