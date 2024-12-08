@@ -8,7 +8,7 @@ class Value():
     This solution
      - reverses the lists when creating the extrapolation triangle
      - switching the sign of row value to used to build triangle
-     
+
     '''
 
     def __init__(self, history):
@@ -50,7 +50,7 @@ class Value():
         print(self.history, "has reversed difference steps", self.reversed_difference_steps)
         for this_line, next_line in zip(self.reversed_difference_steps, self.reversed_difference_steps[1:]):
             this_line.append(this_line[-1]) # Append last value on this line to this line
-            next_line.append(next_line[-1]-this_line[-1]) # Append negative current last value on next line and last value on this line to the next line
+            next_line.append(next_line[-1]-this_line[-1]) # Star: Append NEGATIVE current last value on next line and last value on this line to the next line
             triangle.append(next_line)
         
         print(" this gives a triangle", triangle)
